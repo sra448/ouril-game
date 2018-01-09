@@ -60,6 +60,22 @@ const play = (state, player, currentHouse, stonesLeft, initHouse) => {
 }
 
 
+const checkNoMoreStones = (state, player) => {
+  const opponent = player === 1 ? 0 : 1
+  const board = state.getIn(["board"]).toArray()
+  const stones = [0, 1, 2, 3, 4, 5]
+    .map(x => board[opponent * 6 + x])
+    .reduce((a, b) => a + b)
+
+  if (stones === 0) {
+    const remainingStones = board.reduce((a, b) => a + b)
+    return state.updateIn(["score", player], x => x + remainingStones)
+  } else {
+    return state
+  }
+}
+
+
 const checkWinner = (state) => {
   if (state.getIn(["score", 0]) > 24) {
     return state.setIn(["winner"], 0)
@@ -77,5 +93,5 @@ module.exports = (state, player, house) => {
   const stonesLeft = board.getIn([id])
   const newState = play(state.setIn(["board", id], 0), player, nextHouse(id), stonesLeft, id)
 
-  return checkWinner(newState)
+  return checkWinner(checkNoMoreStones(newState, player))
 }

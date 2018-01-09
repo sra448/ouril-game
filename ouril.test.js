@@ -90,6 +90,18 @@ test('capturing stones grants points', () => {
 })
 
 
+test('when the player has no more stone to play, the remaining stones belong to the opponent', () => {
+  const noMoves = List([1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0])
+  const noMoves2 = List([0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+
+  expect(play(state.setIn(["board"], noMoves), 0, 0).getIn(["score", 0]))
+    .toBe(6)
+
+  expect(play(state.setIn(["board"], noMoves2), 1, 0).getIn(["score", 1]))
+    .toBe(6)
+})
+
+
 test('the first player to reach 25 stones wins', () => {
   const catchMe = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
   const catchMore = List([1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1])
