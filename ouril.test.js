@@ -81,12 +81,6 @@ test('capturing stones grants points', () => {
 
   expect(play(state.setIn(["board"], catchMe), 1, 5).getIn(["score", 1]))
     .toBe(2)
-
-  expect(play(state.setIn(["board"], catchMore), 0, 5).getIn(["score", 0]))
-    .toBe(12)
-
-  expect(play(state.setIn(["board"], catchMore2), 1, 5).getIn(["score", 1]))
-    .toBe(12)
 })
 
 
