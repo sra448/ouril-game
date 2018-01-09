@@ -48,10 +48,12 @@ const play = (board, player, currentHouse, stonesLeft, initHouse) => {
 }
 
 
-module.exports = (board, player, house) => {
+module.exports = (state, player, house) => {
+  const board = state.getIn(["board"])
   const id = player * 6 + house
   const stonesLeft = board.getIn([id])
   const boardLeft = board.setIn([id], 0)
+  const newBoard = play(boardLeft, player, nextHouse(id), stonesLeft, house)
 
-  return play(boardLeft, player, nextHouse(id), stonesLeft, house)
+  return state.setIn(["board"], newBoard)
 }
