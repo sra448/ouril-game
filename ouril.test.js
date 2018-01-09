@@ -56,10 +56,36 @@ test('when capturing a house, also capture its left neighbours as long as they q
 test('only capture stones in the opponents houses', () => {
   const catchMe = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
   const catchMore = List([1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1])
+  const catchMore2 = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1])
 
   expect(play(state.setIn(["board"], catchMe), 0, 0).getIn(["board"]).toArray())
     .toEqual([0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
+  expect(play(state.setIn(["board"], catchMe), 1, 0).getIn(["board"]).toArray())
+    .toEqual([1, 1, 1, 1, 1, 1, 0, 2, 1, 1, 1, 1])
+
   expect(play(state.setIn(["board"], catchMore), 0, 4).getIn(["board"]).toArray())
     .toEqual([1, 1, 1, 1, 0, 2, 0, 0, 0, 0, 0, 1])
+
+  expect(play(state.setIn(["board"], catchMore2), 1, 4).getIn(["board"]).toArray())
+    .toEqual([0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 2])
+})
+
+
+test('capturing stones grants points', () => {
+  const catchMe = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+  const catchMore = List([1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1])
+  const catchMore2 = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6])
+
+  expect(play(state.setIn(["board"], catchMe), 0, 5).getIn(["score", 0]))
+    .toBe(2)
+
+  expect(play(state.setIn(["board"], catchMe), 1, 5).getIn(["score", 1]))
+    .toBe(2)
+
+  expect(play(state.setIn(["board"], catchMore), 0, 5).getIn(["score", 0]))
+    .toBe(12)
+
+  expect(play(state.setIn(["board"], catchMore2), 1, 5).getIn(["score", 1]))
+    .toBe(12)
 })
