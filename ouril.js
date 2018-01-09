@@ -1,12 +1,16 @@
 const nextHouse = (currentHouse, initHouse) => {
-  const id = currentHouse + 1 % 11
-  return id == initHouse ? id + 1 : id
+  const id = (currentHouse + 1) % 12
+  return id == initHouse ? nextHouse(id) : id
 }
 
 
 const play = (board, currentHouse, stonesLeft, initHouse) => {
   if (stonesLeft > 1) {
-    return play(board.updateIn([currentHouse], x => x + 1), nextHouse(currentHouse), stonesLeft - 1, initHouse)
+    const boardLeft = board.updateIn([currentHouse], x => x + 1)
+    const nextId = nextHouse(currentHouse, stonesLeft < 12 ? initHouse : undefined)
+
+    return play(boardLeft, nextId, stonesLeft - 1, initHouse)
+
   } else {
     return board.updateIn([currentHouse], x => x + 1)
   }
@@ -14,9 +18,9 @@ const play = (board, currentHouse, stonesLeft, initHouse) => {
 
 
 module.exports = (board, player, house) => {
-  const id = 0 * player + house
-  const stones = board.getIn([id])
-  const boardA = board.setIn([0 * player + house], 0)
+  const id = player * 6 + house
+  const stonesLeft = board.getIn([id])
+  const boardLeft = board.setIn([id], 0)
 
-  return play(boardA, nextHouse(house), stones, house)
+  return play(boardLeft, nextHouse(id), stonesLeft, house)
 }
