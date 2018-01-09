@@ -4,15 +4,46 @@ const nextHouse = (currentHouse, initHouse) => {
 }
 
 
-const play = (board, currentHouse, stonesLeft, initHouse) => {
+const prevHouse = (house) => {
+  return house - 1 > 0 ? house - 1 : 11
+}
+
+
+const isOpponentHouse = (house, player) => {
+  return !(house < player * 6 + 6)
+}
+
+
+const canCapture = (board, house, player) => {
+  const stones = board.getIn([house])
+  return isOpponentHouse(house, player) && stones > 0 && stones <= 2
+}
+
+
+const capture = (board, house, player) => {
+  const prevId = prevHouse(house)
+
+  if (canCapture(board, house, player)) {
+    return capture(board.setIn([house], 0), prevId, player)
+  } else {
+    return board
+  }
+}
+
+
+const play = (board, player, currentHouse, stonesLeft, initHouse) => {
   if (stonesLeft > 1) {
     const boardLeft = board.updateIn([currentHouse], x => x + 1)
     const nextId = nextHouse(currentHouse, stonesLeft < 12 ? initHouse : undefined)
 
-    return play(boardLeft, nextId, stonesLeft - 1, initHouse)
+    return play(boardLeft, player, nextId, stonesLeft - 1, initHouse)
 
   } else {
-    return board.updateIn([currentHouse], x => x + 1)
+    if (canCapture(board, currentHouse, player)) {
+      return capture(board, currentHouse, player)
+    } else {
+      return board.updateIn([currentHouse], x => x + 1)
+    }
   }
 }
 
@@ -22,5 +53,5 @@ module.exports = (board, player, house) => {
   const stonesLeft = board.getIn([id])
   const boardLeft = board.setIn([id], 0)
 
-  return play(boardLeft, nextHouse(id), stonesLeft, house)
+  return play(boardLeft, player, nextHouse(id), stonesLeft, house)
 }
