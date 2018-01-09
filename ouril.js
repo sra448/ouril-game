@@ -60,10 +60,22 @@ const play = (state, player, currentHouse, stonesLeft, initHouse) => {
 }
 
 
+const checkWinner = (state) => {
+  if (state.getIn(["score", 0]) > 24) {
+    return state.setIn(["winner"], 0)
+  } else if (state.getIn(["score", 1]) > 24) {
+    return state.setIn(["winner"], 1)
+  } else {
+    return state
+  }
+}
+
+
 module.exports = (state, player, house) => {
   const board = state.getIn(["board"])
   const id = player * 6 + house
   const stonesLeft = board.getIn([id])
+  const newState = play(state.setIn(["board", id], 0), player, nextHouse(id), stonesLeft, id)
 
-  return play(state.setIn(["board", id], 0), player, nextHouse(id), stonesLeft, id)
+  return checkWinner(newState)
 }
