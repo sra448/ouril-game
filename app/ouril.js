@@ -87,7 +87,7 @@ const checkWinner = (state) => {
 }
 
 
-module.exports = (state, player, house) => {
+export default (state, player, house) => {
   const board = state.getIn(["board"])
   const id = player * 6 + house
   const stonesLeft = board.getIn([id])

@@ -10,16 +10,27 @@
   "license": "ISC",
   "dependencies": {
     "immutable": "^3.8.2",
-    "jest": "^22.0.4"
+    "jest": "^22.0.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-jest": "^22.0.4",
+    "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
-    "regenerator-runtime": "^0.11.1"
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.8",
+    "regenerator-runtime": "^0.11.1",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.1"
   },
   "babel": {
-    "presets": ["env"]
+    "presets": [
+      "react"
+    ]
   }
 }
