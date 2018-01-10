@@ -22,6 +22,11 @@
       width: 55px;
       height: 55px;
       border-radius: 35px;
+      cursor: pointer;
     }
   }
+}
+
+.reversed > div {
+  flex-direction: row-reverse;
 }

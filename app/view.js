@@ -13,15 +13,41 @@ const mapStateToProps = (state) => {
 }
 
 
-const mapDispatchToProps = () => {
-  return {}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onPlay: (player, house) => () => {
+      dispatch({
+        type: "PLAY_HOUSE",
+        player,
+        house
+      })
+    }
+  }
+}
+
+
+// Components
+
+
+const BoardSide = ({ houses, player, reversed, onPlay }) => {
+  const className = reversed ? "board-side reversed" : "board-side"
+
+  return (
+    <div className={className}>
+      <div>
+        { houses.map((x, i) => (
+          <div key={i} onClick={onPlay(player, i)}>{x}</div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 
 // Main Component
 
 
-const main = ({ state }) => {
+const main = ({ state, onPlay }) => {
   const board = state.getIn(["board"]).toArray()
   const [player, opponent] = chunk(board, 6)
 
@@ -29,20 +55,8 @@ const main = ({ state }) => {
     <div>
       <h1>ouril</h1>
       <div>
-        <div class="board-side">
-          <div>
-            { opponent.reverse().map((x, i) => (
-              <div key={i}>{x}</div>
-            ))}
-          </div>
-        </div>
-        <div class="board-side">
-          <div>
-            { player.map((x, i) => (
-              <div key={i}>{x}</div>
-            ))}
-          </div>
-        </div>
+        <BoardSide houses={opponent} player={1} onPlay={onPlay} reversed={true} />
+        <BoardSide houses={player} player={0} onPlay={onPlay} />
       </div>
     </div>
   )
