@@ -1,0 +1,27 @@
+
+.board-side {
+  display: flex;
+  width: 400px;
+  padding: 0 10px;
+  height: 70px;
+  border: 1px solid black;
+  border-radius: 30px;
+  margin: 5px;
+
+  > div {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+
+    > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid black;
+      width: 55px;
+      height: 55px;
+      border-radius: 35px;
+    }
+  }
+}
