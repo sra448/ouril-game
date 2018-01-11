@@ -1,6 +1,7 @@
 import { times, random } from "lodash"
 import { List, Map } from "immutable"
 import play from "./state/ouril"
+import { writeFile } from "fs"
 
 
 const nextPlayer = player => player === 0 && 1 || 0
@@ -33,11 +34,22 @@ const playGame = () => {
     state = play(state, player, house)
     console.log(state.getIn(["log"]).last())
   }
+
+  return state.getIn(["log"]).toArray()
 }
 
 
-times(100)
+var logs = []
+
+
+times(1000)
   .map((i) => {
     console.log(`Game ${i}`)
-    playGame()
+    logs = [...logs, ...playGame()]
   })
+
+
+writeFile("logs.json", JSON.stringify({ logs }), (err) => {
+  if (err) throw err
+  console.log("logs written")
+})

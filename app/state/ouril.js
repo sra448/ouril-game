@@ -105,7 +105,7 @@ const logMove = (state, oldState, player, house) => {
   const score = scores[player] - scores[player]
 
   return state.updateIn(["log"], ls =>
-    ls.push(List([...oldBoard, player, ...scores, house, score]))
+    ls.push(List([...oldBoard, ...scores, player, house, score]))
   )
 }
 
