@@ -1,6 +1,7 @@
 module.exports = {
   entry: {
-    "index": "./index.js"
+    "index": "./index.js",
+    "sparring": "./sparring.js"
   },
   output: {
     path: __dirname,

@@ -19,7 +19,7 @@ export default (action$, store) => {
       return {
         type: "PLAY_HOUSE",
         player: 1,
-        house: random(possibleHouses.length - 1)
+        house: possibleHouses[random(possibleHouses.length - 1)]
       }
     })
 }

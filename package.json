@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "spar": "node ./app/bin/sparring.js"
   },
   "author": "",
   "license": "ISC",
