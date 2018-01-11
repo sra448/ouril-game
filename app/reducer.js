@@ -11,9 +11,7 @@ const initialState = Map({
 })
 
 
-
 const nextPlayer = player => player === 0 && 1 || 0
-
 
 
 const playHouse = (state, player, house) => {
@@ -24,7 +22,6 @@ const playHouse = (state, player, house) => {
     return state
   }
 }
-
 
 
 export default (state = initialState, action) => {
