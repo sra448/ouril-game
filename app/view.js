@@ -55,8 +55,10 @@ const main = ({ state, onPlay }) => {
     <div>
       <h1>ouril</h1>
       <div>
+        <div>{state.getIn(["score", 1])}</div>
         <BoardSide houses={opponent} player={1} onPlay={onPlay} reversed={true} />
         <BoardSide houses={player} player={0} onPlay={onPlay} />
+        <div>{state.getIn(["score", 0])}</div>
       </div>
     </div>
   )
