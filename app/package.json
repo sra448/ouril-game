@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "spar": "node ./app/bin/sparring.js"
+    "spar": "node ./bin/sparring.js"
   },
   "author": "",
   "license": "ISC",
