@@ -116,7 +116,16 @@ test('the first player to reach 25 stones wins', () => {
 })
 
 
+test('if both players hav 24 stones, its a draw', () => {
+  const catchMe = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+  const almostWon = state.setIn(["score", 0], 22).setIn(["score", 1], 24)
+
+  expect(play(almostWon.setIn(["board"], catchMe), 0, 5).getIn(["isDraw"]))
+    .toBe(true)
+})
+
+
 test('moves are logged', () => {
   expect(play(state, 0, 5).getIn(["log", 0]).toArray())
-    .toEqual([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 5, 0])
+    .toEqual([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 5, 0])
 })

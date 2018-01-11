@@ -79,23 +79,33 @@ const checkNoMoreStones = (state, player) => {
 }
 
 
-const checkWinner = (state) => {
-  if (state.getIn(["score", 0]) > 24) {
-    return state.setIn(["winner"], 0)
-  } else if (state.getIn(["score", 1]) > 24) {
-    return state.setIn(["winner"], 1)
+const checkDraw = (state) => {
+  if (state.getIn(["score", 0]) === 24 && state.getIn(["score", 1]) === 24) {
+    return state.setIn(["isDraw"], true)
   } else {
     return state
   }
 }
 
 
+const checkWinner = (state) => {
+  if (state.getIn(["score", 0]) > 24) {
+    return state.setIn(["winner"], 0)
+  } else if (state.getIn(["score", 1]) > 24) {
+    return state.setIn(["winner"], 1)
+  } else {
+    return checkDraw(state)
+  }
+}
+
+
 const logMove = (state, oldState, player, house) => {
   const oldBoard = oldState.getIn(["board"]).toArray()
-  const score = state.getIn(["score", player]) - oldState.getIn(["score", player])
+  const scores = state.getIn(["score"]).toArray()
+  const score = scores[player] - scores[player]
 
   return state.updateIn(["log"], ls =>
-    ls.push(List([...oldBoard, player, house, score]))
+    ls.push(List([...oldBoard, player, ...scores, house, score]))
   )
 }
 

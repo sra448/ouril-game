@@ -12,10 +12,11 @@ const playGame = () => {
     board: List([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]),
     score: List([0, 0]),
     winner: undefined,
+    isDraw: false,
     log: List([])
   })
 
-  while (state.getIn(["winner"]) === undefined) {
+  while (state.getIn(["winner"]) === undefined && state.getIn(["isDraw"]) === false) {
     player = nextPlayer(player)
 
     const houses = state.getIn(["board"]).toArray()
@@ -27,7 +28,9 @@ const playGame = () => {
       }
     }, [])
 
-    state = play(state, player, possibleHouses[random(possibleHouses)])
+    const house = possibleHouses[random(possibleHouses.length - 1)]
+
+    state = play(state, player, house)
     console.log(state.getIn(["log"]).last())
   }
 }
