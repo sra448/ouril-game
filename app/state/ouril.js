@@ -102,7 +102,7 @@ const checkWinner = (state) => {
 const logMove = (state, oldState, player, house) => {
   const oldBoard = oldState.getIn(["board"]).toArray()
   const scores = state.getIn(["score"]).toArray()
-  const score = scores[player] - scores[player]
+  const score = scores[player] - oldState.getIn(["score", player])
 
   return state.updateIn(["log"], ls =>
     ls.push(List([...oldBoard, ...scores, player, house, score]))
