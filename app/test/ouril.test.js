@@ -1,5 +1,5 @@
 import { List, Map } from 'immutable'
-import play from '../ouril'
+import play from '../state/ouril'
 
 
 const state = Map({
