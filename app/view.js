@@ -37,7 +37,7 @@ const BoardSide = ({ houses, player, reversed, onPlay }) => {
       <div>
         { houses.map((x, i) => (
           <div key={i} onClick={onPlay(player, i)}>{x}</div>
-        ))}
+        )) }
       </div>
     </div>
   )
@@ -59,6 +59,11 @@ const main = ({ state, onPlay }) => {
         <BoardSide houses={opponent} player={1} onPlay={onPlay} reversed={true} />
         <BoardSide houses={player} player={0} onPlay={onPlay} />
         <div>{state.getIn(["score", 0])}</div>
+        <div>
+          { state.getIn(["log"]).toArray().reverse().map((l, i) =>
+            <div key={i}>{l.toString()}</div>
+          ) }
+        </div>
       </div>
     </div>
   )

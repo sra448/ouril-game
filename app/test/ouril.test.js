@@ -1,11 +1,12 @@
 import { List, Map } from 'immutable'
-import play from './ouril'
+import play from '../ouril'
 
 
 const state = Map({
   board: List([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]),
   score: List([0, 0]),
-  winner: undefined
+  winner: undefined,
+  log: List([])
 })
 
 
@@ -98,8 +99,6 @@ test('when the player has no more stone to play, the remaining stones belong to 
 
 test('the first player to reach 25 stones wins', () => {
   const catchMe = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-  const catchMore = List([1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1])
-  const catchMore2 = List([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6])
   const almostWon = state.setIn(["score", 0], 23)
   const almostWon2 = state.setIn(["score", 1], 23)
 
@@ -114,4 +113,10 @@ test('the first player to reach 25 stones wins', () => {
 
   expect(play(almostWon2.setIn(["board"], catchMe), 1, 5).getIn(["winner"]))
     .toBe(1)
+})
+
+
+test('moves are logged', () => {
+  expect(play(state, 0, 5).getIn(["log", 0]).toArray())
+    .toEqual([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 5, 0])
 })

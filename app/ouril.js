@@ -1,3 +1,6 @@
+import { List } from "immutable"
+
+
 const nextHouse = (currentHouse, initHouse) => {
   const id = (currentHouse + 1) % 12
   return id == initHouse ? nextHouse(id) : id
@@ -87,11 +90,22 @@ const checkWinner = (state) => {
 }
 
 
+const logMove = (state, oldState, player, house) => {
+  const oldBoard = oldState.getIn(["board"]).toArray()
+  const score = state.getIn(["score", player]) - oldState.getIn(["score", player])
+
+  return state.updateIn(["log"], ls =>
+    ls.push(List([...oldBoard, player, house, score]))
+  )
+}
+
+
 export default (state, player, house) => {
   const board = state.getIn(["board"])
   const id = player * 6 + house
   const stonesLeft = board.getIn([id])
   const newState = play(state.setIn(["board", id], 0), player, nextHouse(id), stonesLeft, id)
+  const newerState = checkWinner(checkNoMoreStones(newState, player))
 
-  return checkWinner(checkNoMoreStones(newState, player))
+  return logMove(newerState, state, player, house)
 }

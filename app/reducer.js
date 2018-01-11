@@ -6,6 +6,7 @@ const initialState = Map({
   board: List([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]),
   score: List([0, 0]),
   winner: undefined,
+  log: List([]),
   currentPlayer: 0
 })
 
