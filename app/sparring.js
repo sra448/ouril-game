@@ -49,7 +49,7 @@ times(1000)
   })
 
 
-writeFile("logs.json", JSON.stringify({ logs }), (err) => {
+writeFile("data.json", JSON.stringify(logs), (err) => {
   if (err) throw err
   console.log("logs written")
 })
