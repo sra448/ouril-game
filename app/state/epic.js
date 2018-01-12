@@ -5,7 +5,7 @@ import { filter, delay } from "rxjs"
 export default (action$, store) => {
   return action$.ofType("PLAY_HOUSE")
     .filter(({ player }) => player == 0)
-    .delay(800)
+    .delay(1500)
     .map(() => {
       const houses = store.getState().getIn(["board"]).toArray()
       const possibleHouses = [6, 7, 8, 9, 10, 11].reduce((acc, x, i) => {

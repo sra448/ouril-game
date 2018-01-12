@@ -129,3 +129,13 @@ test('moves are logged', () => {
   expect(play(state, 0, 5).getIn(["log", 0]).toArray())
     .toEqual([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 5, 0])
 })
+
+
+// plays a house that is empty
+// [ 15, 12, 1, 0, 1, 2, 0, 0, 1, 0, 3, 1, 13, 0, 1, 0, 0 ]
+// [ 15, 12, 1, 0, 1, 2, 0, 1, 1, 0, 3, 1, 13, 0, 0, 2, 0 ]
+
+
+// captures houses at 1 and 2 stones (not the first one)
+// List [ 12, 2, 2, 1, 1, 0, 1, 4, 3, 0, 0, 0, 11, 12, 1, 0, 0 ]
+// List [ 12, 2, 2, 1, 1, 6, 0, 3, 2, 1, 1, 2, 11, 12, 0, 5, 7 ]
