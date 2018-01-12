@@ -1,9 +1,10 @@
 import React from "react"
 import { connect } from "react-redux"
-import { chunk } from "lodash"
+import { chunk, times } from "lodash"
 
 
 require("./style.scss")
+require("./stone-positions.scss")
 
 
 // React Redux Bindings
@@ -29,14 +30,25 @@ const mapDispatchToProps = (dispatch) => {
 // Components
 
 
+const Stones = ({ count }) => (
+  times(count).map((_, i) => (
+    <div className={`stone stone-${count}-${i}`} key={i} />
+  ))
+)
+
+
 const BoardSide = ({ houses, player, reversed, onPlay }) => {
-  const className = reversed ? "board-side reversed" : "board-side"
+  const boardClass = reversed ? "board-side reversed" : "board-side"
+  const stoneCountClass = reversed ? "stone-count reversed" : "stone-count"
 
   return (
-    <div className={className}>
+    <div className={boardClass}>
       <div>
         { houses.map((x, i) => (
-          <div key={i} onClick={onPlay(player, i)}>{x}</div>
+          <div key={i} onClick={onPlay(player, i)}>
+            <div className={stoneCountClass}>{x}</div>
+            <Stones count={x} />
+          </div>
         )) }
       </div>
     </div>
@@ -56,8 +68,10 @@ const main = ({ state, onPlay }) => {
       <h1>ouril</h1>
       <div>
         <div>{state.getIn(["score", 1])}</div>
-        <BoardSide houses={opponent} player={1} onPlay={onPlay} reversed={true} />
-        <BoardSide houses={player} player={0} onPlay={onPlay} />
+        <div className="board">
+          <BoardSide houses={opponent} player={1} onPlay={onPlay} reversed={true} />
+          <BoardSide houses={player} player={0} onPlay={onPlay} />
+        </div>
         <div>{state.getIn(["score", 0])}</div>
         <div>
           { state.getIn(["log"]).toArray().reverse().map((l, i) =>

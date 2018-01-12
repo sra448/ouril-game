@@ -1,4 +1,8 @@
 
+.board {
+  margin: 20px 0;
+}
+
 .board-side {
   display: flex;
   width: 400px;
@@ -15,18 +19,44 @@
     align-items: center;
 
     > div {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      position: relative;
       border: 1px solid black;
       width: 55px;
       height: 55px;
       border-radius: 35px;
       cursor: pointer;
+
+      > .stone {
+        position: absolute;
+      }
     }
   }
 }
 
 .reversed > div {
   flex-direction: row-reverse;
+}
+
+.stone {
+  width: 15px;
+  height: 15px;
+  margin: 2px;
+  border: 1px solid black;
+  border-radius: 9px;
+  background: #a1a1a18a;
+}
+
+.stone-count {
+  position: absolute;
+  width: 55px;
+  text-align: center;
+  font-size: 12px;
+
+  &:not(.reversed) {
+    bottom: -25px;
+  }
+
+  &.reversed {
+    top: -25px;
+  }
 }
