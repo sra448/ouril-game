@@ -1,4 +1,5 @@
 import { List } from "immutable"
+import { Observable } from "rxjs"
 
 
 const nextHouse = (currentHouse, initHouse) => {
@@ -27,7 +28,7 @@ const canCapture = (board, house, player) => {
 }
 
 
-const capture = (state, house, player) => {
+const capture = (state, house, player, observer) => {
   const board = state.getIn(["board"])
 
   if (canCapture(board, house, player)) {
@@ -36,6 +37,10 @@ const capture = (state, house, player) => {
       .setIn(["board", house], 0)
       .updateIn(["score", player], x => x + board.getIn([house]))
 
+    if (observer) {
+      observer.next([newState, house, "capture"])
+    }
+
     return capture(newState, prevId, player)
   } else {
     return state
@@ -43,15 +48,18 @@ const capture = (state, house, player) => {
 }
 
 
-const play = (state, player, currentHouse, stonesLeft, initHouse) => {
+const play = (state, player, currentHouse, stonesLeft, initHouse, observer) => {
   const newState = state.updateIn(["board", currentHouse], x => x + 1)
+  if (observer) {
+    observer.next([newState, currentHouse, "seed"])
+  }
 
   if (stonesLeft > 1) {
     const nextId = nextHouse(currentHouse, stonesLeft < 12 ? initHouse : undefined)
-    return play(newState, player, nextId, stonesLeft - 1, initHouse)
+    return play(newState, player, nextId, stonesLeft - 1, initHouse, observer)
 
   } else if (canCapture(newState.getIn(["board"]), currentHouse, player)) {
-    return capture(newState, currentHouse, player)
+    return capture(newState, currentHouse, player, observer)
 
   } else {
     return newState
@@ -106,12 +114,33 @@ const logMove = (state, oldState, player, house) => {
 }
 
 
-export default (state, player, house) => {
+const move = (state, player, house, observer) => {
   const board = state.getIn(["board"])
   const id = player * 6 + house
   const stonesLeft = board.getIn([id])
-  const newState = play(state.setIn(["board", id], 0), player, nextHouse(id), stonesLeft, id)
-  const newerState = checkWinner(checkNoMoreStones(newState, player))
 
-  return logMove(newerState, state, player, house)
+  const clearedHouse = state.setIn(["board", id], 0)
+  if (observer) observer.next([clearedHouse, id, "init"])
+
+  const newState = play(clearedHouse, player, nextHouse(id), stonesLeft, id, observer)
+
+  const newerState = checkWinner(checkNoMoreStones(newState, player))
+  const finalState = logMove(newerState, state, player, house)
+  if (observer) observer.next([finalState])
+
+  return finalState
+}
+
+
+export const playObserve = (state, player, house) => {
+  return new Observable((observer) => {
+    move(state, player, house, observer)
+    return () => {}
+  })
+}
+
+
+
+export default (state, player, house) => {
+  return move(state, player, house)
 }

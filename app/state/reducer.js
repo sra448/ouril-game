@@ -29,8 +29,8 @@ export default (state = initialState, action) => {
 
   switch (action.type) {
 
-    case "PLAY_HOUSE":
-      return playHouse(state, action.player, action.house)
+    case "RENDER":
+      return action.state
 
     default:
       return state
