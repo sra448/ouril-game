@@ -9,7 +9,7 @@ export default (action$, store) => {
     .map(() => {
       const houses = store.getState().getIn(["board"]).toArray()
       const possibleHouses = [6, 7, 8, 9, 10, 11].reduce((acc, x, i) => {
-        if (houses[i] !== 0) {
+        if (houses[x] !== 0) {
           return [...acc, i]
         } else {
           return acc

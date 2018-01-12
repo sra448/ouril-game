@@ -23,7 +23,7 @@ const isOpponentHouse = (house, player) => {
 
 const canCapture = (board, house, player) => {
   const stones = board.getIn([house])
-  return isOpponentHouse(house, player) && stones > 0 && stones <= 2
+  return isOpponentHouse(house, player) && stones >= 2 && stones <= 3
 }
 
 
@@ -44,21 +44,17 @@ const capture = (state, house, player) => {
 
 
 const play = (state, player, currentHouse, stonesLeft, initHouse) => {
-  if (stonesLeft > 1) {
-    const newState = state.updateIn(["board", currentHouse], x => x + 1)
-    const nextId = nextHouse(currentHouse, stonesLeft < 12 ? initHouse : undefined)
+  const newState = state.updateIn(["board", currentHouse], x => x + 1)
 
+  if (stonesLeft > 1) {
+    const nextId = nextHouse(currentHouse, stonesLeft < 12 ? initHouse : undefined)
     return play(newState, player, nextId, stonesLeft - 1, initHouse)
 
-  } else {
-    const board = state.getIn(["board"])
+  } else if (canCapture(newState.getIn(["board"]), currentHouse, player)) {
+    return capture(newState, currentHouse, player)
 
-    if (canCapture(board, currentHouse, player)) {
-      return capture(state, currentHouse, player)
-        .updateIn(["score", player], x => x + 1)
-    } else {
-      return state.updateIn(["board", currentHouse], x => x + 1)
-    }
+  } else {
+    return newState
   }
 }
 

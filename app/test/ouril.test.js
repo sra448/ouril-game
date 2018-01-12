@@ -47,9 +47,13 @@ test('when the last stone falls in a house with 2 or fewer stones the stones are
 
 test('when capturing a house, also capture its left neighbours as long as they qualify', () => {
   const catchMe = List([1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 1])
+  const bug = List([12, 2, 2, 1, 1, 6, 0, 3, 2, 1, 1, 2])
 
   expect(play(state.setIn(["board"], catchMe), 0, 5).getIn(["board"]).toArray())
     .toEqual([1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1])
+
+  expect(play(state.setIn(["board"], bug), 0, 5).getIn(["board"]).toArray())
+    .toEqual([12, 2, 2, 1, 1, 0, 1, 4, 0, 0, 0, 0])
 })
 
 
@@ -129,13 +133,3 @@ test('moves are logged', () => {
   expect(play(state, 0, 5).getIn(["log", 0]).toArray())
     .toEqual([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 5, 0])
 })
-
-
-// plays a house that is empty
-// [ 15, 12, 1, 0, 1, 2, 0, 0, 1, 0, 3, 1, 13, 0, 1, 0, 0 ]
-// [ 15, 12, 1, 0, 1, 2, 0, 1, 1, 0, 3, 1, 13, 0, 0, 2, 0 ]
-
-
-// captures houses at 1 and 2 stones (not the first one)
-// List [ 12, 2, 2, 1, 1, 0, 1, 4, 3, 0, 0, 0, 11, 12, 1, 0, 0 ]
-// List [ 12, 2, 2, 1, 1, 6, 0, 3, 2, 1, 1, 2, 11, 12, 0, 5, 7 ]
