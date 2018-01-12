@@ -10,7 +10,7 @@ require("./stone-positions.scss")
 // React Redux Bindings
 
 const mapStateToProps = (state) => {
-  return { state }
+  return { state: state.getIn(["gameState"]) }
 }
 
 

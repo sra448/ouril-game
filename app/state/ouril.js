@@ -126,7 +126,10 @@ const move = (state, player, house, observer) => {
 
   const newerState = checkWinner(checkNoMoreStones(newState, player))
   const finalState = logMove(newerState, state, player, house)
-  if (observer) observer.next([finalState])
+  if (observer) {
+    observer.next([finalState])
+    observer.complete()
+  }
 
   return finalState
 }

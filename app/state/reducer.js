@@ -1,26 +1,24 @@
 import { List, Map } from "immutable"
-import play from "./ouril"
 
 
 const initialState = Map({
-  board: List([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]),
-  score: List([0, 0]),
-  winner: undefined,
-  log: List([]),
+  gameState: Map({
+    board: List([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]),
+    score: List([0, 0]),
+    winner: undefined,
+    log: List([])
+  }),
   currentPlayer: 0
 })
 
 
-const nextPlayer = player => player === 0 && 1 || 0
+const updateGameState = (state, gameState) => {
+  return state.setIn(["gameState"], gameState)
+}
 
 
-const playHouse = (state, player, house) => {
-  if (player === state.getIn(["currentPlayer"])) {
-    return play(state, player, house)
-      .setIn(["currentPlayer"], nextPlayer(player))
-  } else {
-    return state
-  }
+const switchPlayer = (state, nextPlayer) => {
+  return state.setIn(["currentPlayer"], nextPlayer)
 }
 
 
@@ -29,8 +27,11 @@ export default (state = initialState, action) => {
 
   switch (action.type) {
 
-    case "RENDER":
-      return action.state
+    case "GAME_STATE_CHANGE":
+      return updateGameState(state, action.state)
+
+    case "SWITCH_PLAYER":
+      return switchPlayer(state, action.nextPlayer)
 
     default:
       return state
