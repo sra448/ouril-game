@@ -23,24 +23,33 @@ const playGame = () => {
     player = nextPlayer(player)
     const house = randomBot(state, player)
     state = play(state, player, house)
-    console.log(state.getIn(["log"]).last())
   }
 
-  return state.getIn(["log"]).toArray()
+  return state
 }
 
+var initLog = Map({
+  moves: List([]),
+  wins: List([0, 0])
+})
 
-var logs = []
+const log = times(1000)
+  .reduce((log, i) => {
+    const finalState = playGame()
+    const logs = finalState.getIn(["log"])
+    const winner = finalState.getIn(["winner"])
+
+    console.log(`${i} => ${winner} won in ${logs.count()} moves`)
+    return log
+      .updateIn(["wins", winner], x => x + 1)
+      .updateIn(["moves"], (moves) => moves.concat(logs))
+  }, initLog)
 
 
-times(1000)
-  .map((i) => {
-    console.log(`Game ${i}`)
-    logs = [...logs, ...playGame()]
-  })
-
-
-writeFile("data.json", JSON.stringify(logs), (err) => {
+writeFile("data.json", JSON.stringify(log.getIn("moves")), (err) => {
   if (err) throw err
+  const averageMoves = log.getIn(["moves"]).count /
+  console.log(`win distribution: ${log.getIn(["wins"])}`)
+  console.log(`average game length: ${log.getIn(["moves"]).count() / 1000}`)
   console.log("logs written")
 })
