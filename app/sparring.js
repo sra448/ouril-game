@@ -1,7 +1,9 @@
 import { times, random } from "lodash"
 import { List, Map } from "immutable"
-import play from "./state/ouril"
 import { writeFile } from "fs"
+
+import play from "./state/ouril"
+import randomBot from "./state/strategies/random"
 
 
 const nextPlayer = player => player === 0 && 1 || 0
@@ -19,18 +21,7 @@ const playGame = () => {
 
   while (state.getIn(["winner"]) === undefined && state.getIn(["isDraw"]) === false) {
     player = nextPlayer(player)
-
-    const houses = state.getIn(["board"]).toArray()
-    const possibleHouses = [0, 1, 2, 3, 4, 5].reduce((acc, x, i) => {
-      if (houses[player * 6 + i] !== 0) {
-        return [...acc, i]
-      } else {
-        return acc
-      }
-    }, [])
-
-    const house = possibleHouses[random(possibleHouses.length - 1)]
-
+    const house = randomBot(state, player)
     state = play(state, player, house)
     console.log(state.getIn(["log"]).last())
   }

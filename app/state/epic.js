@@ -1,7 +1,8 @@
-import { random } from "lodash"
 import { Observable, filter, delay, concat } from "rxjs"
 import { combineEpics } from "redux-observable"
+
 import { playObserve } from "./ouril"
+import randomBot from "./strategies/random"
 
 
 const { zip, interval, merge } = Observable
@@ -32,7 +33,7 @@ const playerMove = (action$, store) => {
       const moves$ = playObserve(gameState, player, house)
       const finalAction = { type: "SWITCH_PLAYER", nextPlayer: nextPlayer(player) }
 
-      return withInterval(moves$, 120)
+      return withInterval(moves$, 150)
         .map(([state]) => {
           return { type: "GAME_STATE_CHANGE", state }
         })
@@ -46,20 +47,14 @@ const opponentMove = (action$, store) => {
     .ofType("SWITCH_PLAYER")
     .filter(({ nextPlayer }) => nextPlayer === 1)
     .delay(1200)
-    .map(() => {
-      const houses = store.getState().getIn(["gameState", "board"]).toArray()
-      const possibleHouses = [6, 7, 8, 9, 10, 11].reduce((acc, x, i) => {
-        if (houses[x] !== 0) {
-          return [...acc, i]
-        } else {
-          return acc
-        }
-      }, [])
+    .map(({ nextPlayer }) => {
+      const gameState = store.getState().getIn(["gameState"])
+      const house = randomBot(gameState, nextPlayer)
 
       return {
         type: "PLAY_HOUSE",
         player: 1,
-        house: possibleHouses[random(possibleHouses.length - 1)]
+        house: house
       }
     })
 }
