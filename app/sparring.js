@@ -4,6 +4,7 @@ import { writeFile } from "fs"
 
 import play from "./state/ouril"
 import randomBot from "./state/strategies/random"
+import maxBot from "./state/strategies/max"
 
 
 const nextPlayer = player => player === 0 && 1 || 0
@@ -21,7 +22,7 @@ const playGame = () => {
 
   while (state.getIn(["winner"]) === undefined && state.getIn(["isDraw"]) === false) {
     player = nextPlayer(player)
-    const house = randomBot(state, player)
+    const house = player == 0 ? maxBot(state, player) : randomBot(state, player)
     state = play(state, player, house)
   }
 
@@ -48,7 +49,6 @@ const log = times(1000)
 
 writeFile("data.json", JSON.stringify(log.getIn("moves")), (err) => {
   if (err) throw err
-  const averageMoves = log.getIn(["moves"]).count /
   console.log(`win distribution: ${log.getIn(["wins"])}`)
   console.log(`average game length: ${log.getIn(["moves"]).count() / 1000}`)
   console.log("logs written")
