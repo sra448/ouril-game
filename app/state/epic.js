@@ -4,6 +4,8 @@ import { combineEpics } from "redux-observable"
 import { playObserve } from "./ouril"
 import randomBot from "./strategies/random"
 import maxBot from "./strategies/max"
+import minMaxBot from "./strategies/min-max"
+import randomMaxBot from "./strategies/random-max"
 
 
 const { zip, interval, merge } = Observable
@@ -34,7 +36,7 @@ const playerMove = (action$, store) => {
       const moves$ = playObserve(gameState, player, house)
       const finalAction = { type: "SWITCH_PLAYER", nextPlayer: nextPlayer(player) }
 
-      return withInterval(moves$, 150)
+      return withInterval(moves$, 140)
         .map(([state]) => {
           return { type: "GAME_STATE_CHANGE", state }
         })
@@ -50,7 +52,7 @@ const opponentMove = (action$, store) => {
     .delay(1200)
     .map(({ nextPlayer }) => {
       const gameState = store.getState().getIn(["gameState"])
-      const house = maxBot(gameState, nextPlayer)
+      const house = minMaxBot(gameState, nextPlayer)
 
       return {
         type: "PLAY_HOUSE",

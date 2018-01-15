@@ -23,8 +23,6 @@ const switchPlayer = (state, nextPlayer) => {
 
 
 export default (state = initialState, action) => {
-  console.log(action)
-
   switch (action.type) {
 
     case "GAME_STATE_CHANGE":

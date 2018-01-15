@@ -4,7 +4,9 @@ import { writeFile } from "fs"
 
 import play from "./state/ouril"
 import randomBot from "./state/strategies/random"
+import randomMaxBot from "./state/strategies/random-max"
 import maxBot from "./state/strategies/max"
+import minMaxBot from "./state/strategies/min-max"
 
 
 const nextPlayer = player => player === 0 && 1 || 0
@@ -22,7 +24,7 @@ const playGame = () => {
 
   while (state.getIn(["winner"]) === undefined && state.getIn(["isDraw"]) === false) {
     player = nextPlayer(player)
-    const house = player == 0 ? maxBot(state, player) : randomBot(state, player)
+    const house = player == 0 ? minMaxBot(state, player) : randomMaxBot(state, player)
     state = play(state, player, house)
   }
 
