@@ -41,7 +41,7 @@ const capture = (state, house, player, observer) => {
       observer.next([newState, house, "capture"])
     }
 
-    return capture(newState, prevId, player)
+    return capture(newState, prevId, player, observer)
   } else {
     return state
   }
