@@ -6,6 +6,7 @@ import randomBot from "./strategies/random"
 import maxBot from "./strategies/max"
 import minMaxBot from "./strategies/min-max"
 import randomMaxBot from "./strategies/random-max"
+import { QueueScheduler } from "rxjs/scheduler/QueueScheduler";
 
 
 const { zip, interval, merge } = Observable
@@ -50,10 +51,11 @@ const opponentMove = (action$, store) => {
     .ofType("SWITCH_PLAYER")
     .filter(({ nextPlayer }) => nextPlayer === 1)
     .delay(1200)
-    .map(({ nextPlayer }) => {
+    .switchMap(({ nextPlayer }) => {
       const gameState = store.getState().getIn(["gameState"])
-      const house = minMaxBot(gameState, nextPlayer)
-
+      return minMaxBot(gameState, nextPlayer)
+    })
+    .map((house) => {
       return {
         type: "PLAY_HOUSE",
         player: 1,

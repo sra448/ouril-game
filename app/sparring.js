@@ -1,3 +1,4 @@
+import { Observable } from "rxjs"
 import { times, random } from "lodash"
 import { List, Map } from "immutable"
 import { writeFile } from "fs"
@@ -9,26 +10,39 @@ import maxBot from "./state/strategies/max"
 import minMaxBot from "./state/strategies/min-max"
 
 
+const bot1 = minMaxBot
+const bot2 = maxBot
+
+
 const nextPlayer = player => player === 0 && 1 || 0
 
 
-const playGame = () => {
-  var player = 1
-  var state = Map({
-    board: List([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]),
-    score: List([0, 0]),
-    winner: undefined,
-    isDraw: false,
-    log: List([])
-  })
+const initGameState = Map({
+  board: List([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]),
+  score: List([0, 0]),
+  winner: undefined,
+  isDraw: false,
+  log: List([])
+})
 
-  while (state.getIn(["winner"]) === undefined && state.getIn(["isDraw"]) === false) {
-    player = nextPlayer(player)
-    const house = player == 0 ? minMaxBot(state, player) : randomMaxBot(state, player)
-    state = play(state, player, house)
+
+const playGame = (state = initGameState, prevPlayer = 1) => {
+  if (state.getIn(["winner"]) === undefined
+      && state.getIn(["isDraw"]) === false) {
+
+    const player = nextPlayer(prevPlayer)
+    const bot = player == 0 ? bot1 : bot2
+
+    return bot(state, player)
+      .switchMap((house) => {
+        return playGame(play(state, player, house), player)
+      })
+  } else {
+    return new Observable((observer) => {
+      observer.next(state)
+      observer.complete()
+    })
   }
-
-  return state
 }
 
 var initLog = Map({
@@ -36,22 +50,24 @@ var initLog = Map({
   wins: List([0, 0])
 })
 
-const log = times(1000)
-  .reduce((log, i) => {
-    const finalState = playGame()
+
+const log = Observable
+  .range(1, 1000)
+  .switchMap(() => playGame())
+  .reduce((log, finalState) => {
     const logs = finalState.getIn(["log"])
     const winner = finalState.getIn(["winner"])
+    console.log(`${winner} won in ${logs.count()} moves`)
 
-    console.log(`${i} => ${winner} won in ${logs.count()} moves`)
     return log
       .updateIn(["wins", winner], x => x + 1)
       .updateIn(["moves"], (moves) => moves.concat(logs))
   }, initLog)
-
-
-writeFile("data.json", JSON.stringify(log.getIn("moves")), (err) => {
-  if (err) throw err
-  console.log(`win distribution: ${log.getIn(["wins"])}`)
-  console.log(`average game length: ${log.getIn(["moves"]).count() / 1000}`)
-  console.log("logs written")
-})
+  .subscribe((log) => {
+    writeFile("data.json", JSON.stringify(log.getIn("moves")), (err) => {
+      if (err) throw err
+      console.log(`win distribution: ${log.getIn(["wins"])}`)
+      console.log(`average game length: ${log.getIn(["moves"]).count() / 1000}`)
+      console.log("logs written")
+    })
+  })

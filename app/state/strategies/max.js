@@ -1,3 +1,4 @@
+import { Observable } from "rxjs"
 import { random } from "lodash"
 import play from "../ouril"
 
@@ -13,9 +14,12 @@ export default (state, player) => {
     }
   }, [])
 
-  return possibleHouses.reduce(([id, score], house) => {
-    const newState = play(state, player, house)
-    const newScore = newState.getIn(["score", player]) - state.getIn(["score", player])
-    return newScore >= score ? [house, newScore] : [id, score]
-  }, [undefined, -99])[0]
+  return new Observable((observer) => {
+    observer.next(possibleHouses.reduce(([id, score], house) => {
+      const newState = play(state, player, house)
+      const newScore = newState.getIn(["score", player]) - state.getIn(["score", player])
+      return newScore >= score ? [house, newScore] : [id, score]
+    }, [undefined, -99])[0])
+    observer.complete()
+  })
 }

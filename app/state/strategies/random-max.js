@@ -1,3 +1,4 @@
+import { Observable } from "rxjs"
 import { random } from "lodash"
 import play from "../ouril"
 
@@ -24,7 +25,10 @@ export default (state, player) => {
     } else {
       return [ids, score]
     }
-  }, [[], -99])[0]
+  }, [[0], -99])[0]
 
-  return maxHouses[random(maxHouses.length - 1)]
+  return new Observable((observer) => {
+    observer.next(maxHouses[random(maxHouses.length - 1)])
+    observer.complete()
+  })
 }

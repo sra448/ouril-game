@@ -1,6 +1,6 @@
+import { Observable } from "rxjs"
 import { random } from "lodash"
 import play from "../ouril"
-import { max } from "rxjs/operators/max";
 
 
 const nextPlayer = player => player === 0 && 1 || 0
@@ -31,14 +31,17 @@ const lookAhead = (state, player) => {
 
 
 export default (state, player) => {
-  const houses = state.getIn(["board"]).toArray()
+  return new Observable((observer) => {
+    const houses = state.getIn(["board"]).toArray()
 
-  return possibleHouses(houses, player).reduce(([id, score], house) => {
-    const newState = play(state, player, house)
-    const newScore = newState.getIn(["score", player]) - state.getIn(["score", player])
-    const maxOpponentScore = lookAhead(newState, nextPlayer(player))
-    const deltaScore = newScore - maxOpponentScore
+    observer.next(possibleHouses(houses, player).reduce(([id, score], house) => {
+      const newState = play(state, player, house)
+      const newScore = newState.getIn(["score", player]) - state.getIn(["score", player])
+      const maxOpponentScore = lookAhead(newState, nextPlayer(player))
+      const deltaScore = newScore - maxOpponentScore
 
-    return deltaScore >= score ? [house, newScore] : [id, score]
-  }, [undefined, -99])[0]
+      return deltaScore >= score ? [house, newScore] : [id, score]
+    }, [undefined, -99])[0])
+    observer.complete()
+  })
 }
