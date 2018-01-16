@@ -12,6 +12,7 @@
   "dependencies": {
     "immutable": "^3.8.2",
     "jest": "^22.0.4",
+    "keras-js": "^1.0.2",
     "lodash": "^4.17.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
