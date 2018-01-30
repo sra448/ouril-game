@@ -2,6 +2,7 @@ import { Observable, filter, delay, concat } from "rxjs"
 import { combineEpics } from "redux-observable"
 
 import { playObserve } from "./ouril"
+import aiBot from "./strategies/ai"
 import randomBot from "./strategies/random"
 import maxBot from "./strategies/max"
 import minMaxBot from "./strategies/min-max"
@@ -53,7 +54,7 @@ const opponentMove = (action$, store) => {
     .delay(1200)
     .switchMap(({ nextPlayer }) => {
       const gameState = store.getState().getIn(["gameState"])
-      return minMaxBot(gameState, nextPlayer)
+      return aiBot(gameState, nextPlayer)
     })
     .map((house) => {
       return {

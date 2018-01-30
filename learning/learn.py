@@ -1,35 +1,30 @@
 from numpy import array
 from keras.models import Sequential
 from keras.layers import Dense
-from matplotlib import pyplot
+import keras
+import pandas as pds
 
-import json
 
-with open('data.json') as json_data:
-    X = json.load(json_data)
+
+dataset = pds.read_json('data.json', orient='values').values
+dataframeX = dataset[:,0:15]
+dataframeY = dataset[:,16]
+
 
 # create model
 model = Sequential()
-model.add(Dense(17, input_dim=17))
-model.add(Dense(17))
-model.add(Dense(17))
-model.compile(loss='mse', optimizer='adam', metrics=['mse', 'mae', 'mape', 'cosine'])
+model.add(Dense(12, input_shape=(15,), init='uniform', activation='sigmoid'))
+model.add(Dense(12, init='uniform', activation='sigmoid'))
+model.add(Dense(12, init='uniform', activation='sigmoid'))
+model.add(Dense(1, init='uniform', activation='sigmoid'))
+model.summary()
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+
 
 # train model
-history = model.fit(X, X, epochs=500, batch_size=len(X), verbose=2)
+tbCallBack = keras.callbacks.TensorBoard(log_dir='/tmp/keras_logs', write_graph=True)
+model.fit(dataframeX, dataframeY, epochs=50, batch_size=150,  verbose=1, validation_split=0.3, callbacks=[tbCallBack])
 
-# # this only saves the architecture, not the weights
-# # save model to json
-# model_json = model.to_json()
-# with open("model.json", "w") as json_file:
-#   json_file.write(model_json)
 
 # save model and weights
 model.save('my_model.h5')
-
-# plot metrics
-pyplot.plot(history.history['mean_squared_error'])
-# pyplot.plot(history.history['mean_absolute_error'])
-# pyplot.plot(history.history['mean_absolute_percentage_error'])
-# pyplot.plot(history.history['cosine_proximity'])
-pyplot.show()

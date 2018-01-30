@@ -11,7 +11,7 @@ import minMaxBot from "./state/strategies/min-max"
 
 
 const bot1 = minMaxBot
-const bot2 = maxBot
+const bot2 = randomBot
 
 
 const nextPlayer = player => player === 0 && 1 || 0
@@ -52,7 +52,7 @@ var initLog = Map({
 
 
 const log = Observable
-  .range(1, 1000)
+  .range(1, 10000)
   .switchMap(() => playGame())
   .reduce((log, finalState) => {
     const logs = finalState.getIn(["log"])
@@ -64,7 +64,7 @@ const log = Observable
       .updateIn(["moves"], (moves) => moves.concat(logs))
   }, initLog)
   .subscribe((log) => {
-    writeFile("data.json", JSON.stringify(log.getIn("moves")), (err) => {
+    writeFile("data.json", JSON.stringify(log.getIn(["moves"])), (err) => {
       if (err) throw err
       console.log(`win distribution: ${log.getIn(["wins"])}`)
       console.log(`average game length: ${log.getIn(["moves"]).count() / 1000}`)
