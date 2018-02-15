@@ -106,10 +106,13 @@ const checkWinner = (state) => {
 const logMove = (state, oldState, player, house) => {
   const oldBoard = oldState.getIn(["board"]).toArray()
   const scores = state.getIn(["score"]).toArray()
+  const oldScore = oldState.getIn(["score"]).toArray()
   const score = scores[player] - oldState.getIn(["score", player])
+  const logScore = player == 0 ? oldScore : oldScore.reverse()
+  const logHouse = player * 6 + house
 
   return state.updateIn(["log"], ls =>
-    ls.push(List([...oldBoard, ...scores, player, house, score]))
+    ls.push(List([...oldBoard, logHouse, ...logScore, score]))
   )
 }
 

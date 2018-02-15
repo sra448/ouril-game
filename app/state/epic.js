@@ -54,7 +54,7 @@ const opponentMove = (action$, store) => {
     .delay(1200)
     .switchMap(({ nextPlayer }) => {
       const gameState = store.getState().getIn(["gameState"])
-      return aiBot(gameState, nextPlayer)
+      return minMaxBot(gameState, nextPlayer)
     })
     .map((house) => {
       return {

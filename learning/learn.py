@@ -6,13 +6,13 @@ import pandas as pds
 
 # prepare data
 dataset = pds.read_json('data.json', orient='values').values
-dataframeX = dataset[:,0:15]
-dataframeY = dataset[:,16]
+dataframeX = dataset[:,0:14]
+dataframeY = dataset[:,15]
 
 
 # create model
 model = Sequential()
-model.add(Dense(12, input_shape=(15,), init='uniform', activation='sigmoid'))
+model.add(Dense(12, input_shape=(14,), init='uniform', activation='sigmoid'))
 model.add(Dense(12, init='uniform', activation='sigmoid'))
 model.add(Dense(12, init='uniform', activation='sigmoid'))
 model.add(Dense(1, init='uniform', activation='sigmoid'))

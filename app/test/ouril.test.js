@@ -131,5 +131,5 @@ test('if both players hav 24 stones, its a draw', () => {
 
 test('moves are logged', () => {
   expect(play(state, 0, 5).getIn(["log", 0]).toArray())
-    .toEqual([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 5, 0])
+    .toEqual([4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 0, 0, 0])
 })
