@@ -1,11 +1,10 @@
-from numpy import array
 from keras.models import Sequential
 from keras.layers import Dense
 import keras
 import pandas as pds
 
 
-
+# prepare data
 dataset = pds.read_json('data.json', orient='values').values
 dataframeX = dataset[:,0:15]
 dataframeY = dataset[:,16]
@@ -23,8 +22,8 @@ model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 # train model
 tbCallBack = keras.callbacks.TensorBoard(log_dir='/tmp/keras_logs', write_graph=True)
-model.fit(dataframeX, dataframeY, epochs=50, batch_size=150,  verbose=1, validation_split=0.3, callbacks=[tbCallBack])
+model.fit(dataframeX, dataframeY, epochs=50, batch_size=300,  verbose=1, validation_split=0.3, callbacks=[tbCallBack])
 
 
 # save model and weights
-model.save('my_model.h5')
+model.save('ouril.h5')
