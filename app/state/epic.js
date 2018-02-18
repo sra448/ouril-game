@@ -2,7 +2,7 @@ import { Observable, filter, delay, concat } from "rxjs"
 import { combineEpics } from "redux-observable"
 
 import { playObserve } from "./ouril"
-import aiBot from "./strategies/ai"
+// import aiBot from "./strategies/ai"
 import randomBot from "./strategies/random"
 import maxBot from "./strategies/max"
 import minMaxBot from "./strategies/min-max"

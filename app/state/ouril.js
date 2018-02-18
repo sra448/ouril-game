@@ -107,13 +107,27 @@ const logMove = (state, oldState, player, house) => {
   const oldBoard = oldState.getIn(["board"]).toArray()
   const scores = state.getIn(["score"]).toArray()
   const oldScore = oldState.getIn(["score"]).toArray()
-  const score = scores[player] - oldState.getIn(["score", player])
   const logScore = player == 0 ? oldScore : oldScore.reverse()
   const logHouse = player * 6 + house
+  const playerScore = scores[player] - oldState.getIn(["score", player])
+  const newMove = List([...oldBoard, logHouse, ...logScore, 0])
 
-  return state.updateIn(["log"], ls =>
-    ls.push(List([...oldBoard, logHouse, ...logScore, score]))
-  )
+  return state
+    .updateIn(["log"], ls =>
+      [1]
+        .reduce((acc, factor, i) => {
+          const newAcc = maybeUpdateIn(acc, acc.size - (i * 2 + 1), x => x + factor * playerScore)
+          return maybeUpdateIn(newAcc, acc.size - (i * 2 + 2), x => x - factor * 0.6 * playerScore)
+        }, ls.push(newMove))
+    )
+}
+
+
+const maybeUpdateIn = (acc, id, fn) => {
+  return acc.size <= id || id < 0 ? acc : acc
+    .updateIn([id], (log) => {
+      return log.updateIn([log.size - 1], fn)
+    })
 }
 
 
@@ -129,6 +143,7 @@ const move = (state, player, house, observer) => {
 
   const newerState = checkWinner(checkNoMoreStones(newState, player))
   const finalState = logMove(newerState, state, player, house)
+
   if (observer) {
     observer.next([finalState])
     observer.complete()

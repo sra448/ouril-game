@@ -10,7 +10,7 @@ import maxBot from "./state/strategies/max"
 import minMaxBot from "./state/strategies/min-max"
 
 
-const bot1 = minMaxBot
+const bot1 = randomMaxBot
 const bot2 = randomBot
 
 
@@ -64,7 +64,7 @@ const log = Observable
       .updateIn(["moves"], (moves) => moves.concat(logs))
   }, initLog)
   .subscribe((log) => {
-    writeFile("data.json", JSON.stringify(log.getIn(["moves"])), (err) => {
+    writeFile("../learning/data.json", JSON.stringify(log.getIn(["moves"])), (err) => {
       if (err) throw err
       console.log(`win distribution: ${log.getIn(["wins"])}`)
       console.log(`average game length: ${log.getIn(["moves"]).count() / 1000}`)
