@@ -128,7 +128,6 @@ const logMove = (state, oldState, player, house) => {
   const newState = state.updateIn(["log"], ls => ls.push(newMove))
 
   const winner = state.getIn(["winner"])
-  console.log(winner, winner !== undefined)
 
   if (winner !== undefined) {
     return newState
