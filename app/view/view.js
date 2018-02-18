@@ -75,8 +75,11 @@ const main = ({ state, onPlay }) => {
         <div>{state.getIn(["score", 0])}</div>
         <div>
           { state.getIn(["log"]).toArray().reverse().map((l, i) =>
-            <div key={i}>{l.toString()}</div>
-          ) }
+              chunk(l.toArray(), 12).map((line, j) =>
+                <div key={`${i}-${j}`}>{line.toString()}</div>
+              )
+            )
+          }
         </div>
       </div>
     </div>

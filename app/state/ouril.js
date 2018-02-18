@@ -1,5 +1,6 @@
 import { List } from "immutable"
 import { Observable } from "rxjs"
+import { range } from "lodash"
 
 
 const nextHouse = (currentHouse, initHouse) => {
@@ -103,31 +104,45 @@ const checkWinner = (state) => {
 }
 
 
-const logMove = (state, oldState, player, house) => {
-  const oldBoard = oldState.getIn(["board"]).toArray()
-  const scores = state.getIn(["score"]).toArray()
-  const oldScore = oldState.getIn(["score"]).toArray()
-  const logScore = player == 0 ? oldScore : oldScore.reverse()
-  const logHouse = player * 6 + house
-  const playerScore = scores[player] - oldState.getIn(["score", player])
-  const newMove = List([...oldBoard, logHouse, ...logScore, 0])
-
-  return state
-    .updateIn(["log"], ls =>
-      [1]
-        .reduce((acc, factor, i) => {
-          const newAcc = maybeUpdateIn(acc, acc.size - (i * 2 + 1), x => x + factor * playerScore)
-          return maybeUpdateIn(newAcc, acc.size - (i * 2 + 2), x => x - factor * 0.6 * playerScore)
-        }, ls.push(newMove))
-    )
+const getDestinations = (house, stones) => {
+  return range(stones < 12 ? stones : stones + 1)
+    .reduce((acc, x, i) => {
+      if (i != 11) acc[(house + i + 1) % 12] += 1
+      return acc
+    }, range(12).map(x => 0))
 }
 
 
-const maybeUpdateIn = (acc, id, fn) => {
-  return acc.size <= id || id < 0 ? acc : acc
-    .updateIn([id], (log) => {
-      return log.updateIn([log.size - 1], fn)
-    })
+const logMove = (state, oldState, player, house) => {
+  const houseId = player * 6 + house
+  const board = oldState.getIn(["board"]).toArray()
+  const move = range(12).map((x, i) => i == houseId ? 1 : 0)
+  const destinations = getDestinations(houseId, oldState.getIn(["board", houseId]))
+  const captures = range(12).map((x, i) => {
+    return i != houseId && state.getIn(["board", i]) === 0 ? board[i] + destinations[i] : 0
+  })
+  const score = oldState.getIn(["score"]).toArray()
+  const logScore = player == 0 ? score : score.reverse()
+
+  const newMove = List([...board, ...move, ...destinations, ...captures, ...logScore, 0])
+  const newState = state.updateIn(["log"], ls => ls.push(newMove))
+
+  const winner = state.getIn(["winner"])
+  console.log(winner, winner !== undefined)
+
+  if (winner !== undefined) {
+    return newState
+      .updateIn(["log"], ls => {
+        return ls.map((x, i) => {
+          return winner == 0 && i % 2 == 0 ||
+            winner == 1 && i % 2 == 1
+              ? x.setIn([x.size - 1], 1)
+              : x.setIn([x.size - 1], -1)
+            })
+      })
+  } else {
+    return newState
+  }
 }
 
 
