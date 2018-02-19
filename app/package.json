@@ -29,6 +29,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.8",
+    "minimist": "^1.2.0",
     "node-sass": "^4.7.2",
     "regenerator-runtime": "^0.11.1",
     "sass-loader": "^6.0.6",

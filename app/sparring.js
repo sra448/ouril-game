@@ -2,6 +2,7 @@ import { Observable } from "rxjs"
 import { times, random } from "lodash"
 import { List, Map } from "immutable"
 import { writeFile } from "fs"
+import Minimist from "minimist"
 
 import play from "./state/ouril"
 import randomBot from "./state/strategies/random"
@@ -10,8 +11,25 @@ import maxBot from "./state/strategies/max"
 import minMaxBot from "./state/strategies/min-max"
 
 
-const bot1 = randomMaxBot
-const bot2 = randomBot
+const bots = {
+  "random": randomBot,
+  "max": maxBot,
+  "randomMax": randomMaxBot,
+  "minMax": minMaxBot
+}
+
+
+const argv = Minimist(process.argv.slice(2))
+const gamesCount = +argv["t"] || 10000
+const bot1 = argv["b1"] ? bots[argv["b1"]] : minMaxBot
+const bot2 = argv["b2"] ? bots[argv["b2"]] : randomBot
+
+
+console.log("-----------")
+console.log(`Games: ${gamesCount}`)
+console.log(`Bot 1: ${argv["b1"] || "minMax"}`)
+console.log(`Bot 2: ${argv["b2"] || "random"}`)
+console.log("-----------")
 
 
 const nextPlayer = player => player === 0 && 1 || 0
@@ -47,7 +65,7 @@ const playGame = (state = initGameState, prevPlayer = 1) => {
 
 
 Observable
-  .range(1, 30000)
+  .range(1, gamesCount)
   .switchMap(() => playGame())
   .bufferCount(2000)
   .scan((wins, games, i) => {
@@ -62,11 +80,10 @@ Observable
 
     console.log(`${i + 1} -> ${newWins} -> avg length: ${(logs.length + 1) / (games.length + 1)}`)
 
-    writeFile(`../learning/data/data-${i}.json`, JSON.stringify(logs), (err) => {
+    writeFile(`../learning/data/data-${Date.now()}.json`, JSON.stringify(logs), (err) => {
       if (err) throw err
     })
 
     return newWins
   }, [0, 0])
-  .subscribe((log) => {
-  })
+  .subscribe()
