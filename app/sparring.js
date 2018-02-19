@@ -45,29 +45,28 @@ const playGame = (state = initGameState, prevPlayer = 1) => {
   }
 }
 
-var initLog = Map({
-  moves: List([]),
-  wins: List([0, 0])
-})
 
-
-const log = Observable
-  .range(1, 10000)
+Observable
+  .range(1, 30000)
   .switchMap(() => playGame())
-  .reduce((log, finalState) => {
-    const logs = finalState.getIn(["log"])
-    const winner = finalState.getIn(["winner"])
-    console.log(`${winner} won in ${logs.count()} moves`)
+  .bufferCount(2000)
+  .scan((wins, games, i) => {
+    const logs = games.reduce((acc, game) => {
+      return [...acc, ...game.getIn(["log"]).toArray()]
+    }, [])
 
-    return log
-      .updateIn(["wins", winner], x => x + 1)
-      .updateIn(["moves"], (moves) => moves.concat(logs))
-  }, initLog)
-  .subscribe((log) => {
-    writeFile("../learning/data.json", JSON.stringify(log.getIn(["moves"])), (err) => {
+    const newWins = games.reduce(([a, b], game) => {
+      const winner = game.getIn(["winner"])
+      return [winner === 0 ? a + 1 : a, winner === 1 ? b + 1 : b]
+    }, wins)
+
+    console.log(`${i + 1} -> ${newWins} -> avg length: ${(logs.length + 1) / (games.length + 1)}`)
+
+    writeFile(`../learning/data/data-${i}.json`, JSON.stringify(logs), (err) => {
       if (err) throw err
-      console.log(`win distribution: ${log.getIn(["wins"])}`)
-      console.log(`average game length: ${log.getIn(["moves"]).count() / 1000}`)
-      console.log("logs written")
     })
+
+    return newWins
+  }, [0, 0])
+  .subscribe((log) => {
   })
